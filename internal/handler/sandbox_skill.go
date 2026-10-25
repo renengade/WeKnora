@@ -214,8 +214,6 @@ func respondSkillServiceError(c *gin.Context, err error) {
 // @Failure      404  {object}  apperrors.AppError      "Sandbox config not found"
 // @Security     Bearer
 // @Security     ApiKeyAuth
-// @x-agent      {"id":"skill.list_installed","risk":"read","role":"admin","max_items":200}
-// @x-agent-hint "Lists every skill installed on a sandbox, including disabled, failed and still-installing ones, with the ids that skill.set_enabled and skill.uninstall take. status ready means it can run; missing_envs names values the user must set in the skill settings before it works. Use skill.list for what an agent can pick."
 // @Router       /sandbox-configs/{id}/skills [get]
 func (h *SandboxSkillHandler) List(c *gin.Context) {
 	skills, err := h.service.ListSkills(c.Request.Context(), sandboxConfigTenantID(c), c.Param("id"))
@@ -242,8 +240,6 @@ func (h *SandboxSkillHandler) List(c *gin.Context) {
 // @Failure      404      {object}  apperrors.AppError      "Skill not found"
 // @Security     Bearer
 // @Security     ApiKeyAuth
-// @x-agent      {"id":"skill.get_installed","risk":"read","role":"admin"}
-// @x-agent-hint "Returns one installed skill. After skill.install, read it to follow the install: status moves from installing to ready or failed, and error says why it failed."
 // @Router       /sandbox-configs/{id}/skills/{skillId} [get]
 func (h *SandboxSkillHandler) Get(c *gin.Context) {
 	skill, err := h.resolveSkill(c)
@@ -331,8 +327,6 @@ func (h *SandboxSkillHandler) GetFile(c *gin.Context) {
 // @Failure      404   {object}  apperrors.AppError      "Sandbox config not found"
 // @Security     Bearer
 // @Security     ApiKeyAuth
-// @x-agent      {"id":"skill.install","risk":"write","role":"admin","label_param":"source","always_confirm":true}
-// @x-agent-hint "Installs a public skill onto a sandbox from its source. When the user pastes install instructions from a skill hub (a command such as npx skills add owner/repo --skill name, a clawhub install line, or a page link), turn them into one source: a github.com / gitlab.com / skills.sh / clawhub / skillhub page URL, @owner/slug or a bare slug for ClawHub, skills-sh:owner/repo/slug, or a direct zip or SKILL.md URL. Bare owner/slug is ambiguous and rejected; ask which hub it is from. Never run their commands or ask for keys. The install runs fetched code as root in the sandbox image, so it always asks the user. It takes minutes: tell the user it started, then check it with skill.get_installed. Enable it for an agent with agent.update selected_skills once it is ready."
 // @Router       /sandbox-configs/{id}/skills [post]
 func (h *SandboxSkillHandler) Upload(c *gin.Context) {
 	maxBytes := secutils.GetMaxSkillBundleSize()
@@ -514,8 +508,6 @@ type skillPatchRequest struct {
 // @Failure      404      {object}  apperrors.AppError      "Skill not found"
 // @Security     Bearer
 // @Security     ApiKeyAuth
-// @x-agent      {"id":"skill.set_enabled","risk":"write","role":"admin","target":"skill.get_installed","label":"name"}
-// @x-agent-hint "Shows or hides an installed skill for every agent on that sandbox; the files stay installed. Environment values are not set here: the user enters them in the skill settings."
 // @Router       /sandbox-configs/{id}/skills/{skillId} [patch]
 func (h *SandboxSkillHandler) Patch(c *gin.Context) {
 	limitJSONBody(c, skillSourceJSONMaxBytes)
@@ -570,8 +562,6 @@ func (h *SandboxSkillHandler) Patch(c *gin.Context) {
 // @Failure      404      {object}  apperrors.AppError      "Skill not found"
 // @Security     Bearer
 // @Security     ApiKeyAuth
-// @x-agent      {"id":"skill.uninstall","risk":"destructive","role":"admin","target":"skill.get_installed","label":"name"}
-// @x-agent-hint "Removes a skill from a sandbox image; agents on that sandbox can no longer use it. The rebuild takes minutes. To only hide it, use skill.set_enabled instead."
 // @Router       /sandbox-configs/{id}/skills/{skillId} [delete]
 func (h *SandboxSkillHandler) Delete(c *gin.Context) {
 	skillID := c.Param("skillId")

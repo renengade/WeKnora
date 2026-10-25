@@ -32,10 +32,6 @@ func TestBuiltinInfrastructureWrites(t *testing.T) {
 		{"model.copy", RiskWrite, http.MethodPost, []string{"model_id", "display_name"}},
 		{"model.update", RiskWrite, http.MethodPatch, []string{"model_id", "display_name", "description"}},
 		{"model.delete", RiskDestructive, http.MethodDelete, []string{"model_id"}},
-		{"skill.install", RiskWrite, http.MethodPost, []string{"sandbox_config_id", "source"}},
-		{"skill.install_catalog", RiskWrite, http.MethodPost, []string{"catalog_skill_id", "sandbox_config_ids"}},
-		{"skill.set_enabled", RiskWrite, http.MethodPatch, []string{"sandbox_config_id", "skill_id", "enabled"}},
-		{"skill.uninstall", RiskDestructive, http.MethodDelete, []string{"sandbox_config_id", "skill_id"}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.id, func(t *testing.T) {
@@ -58,31 +54,18 @@ func TestBuiltinInfrastructureWrites(t *testing.T) {
 	auth, _ := create.Param("auth_type")
 	assert.Equal(t, "auth_config.auth_type", auth.Key)
 
-	enabled, _ := catalog.Get("skill.set_enabled")
-	toggle, _ := enabled.Param("enabled")
-	assert.True(t, toggle.Required, "a toggle without enabled would be an env write")
 }
 
 func TestBuiltinInstallsAlwaysAsk(t *testing.T) {
 	catalog := Builtin()
-	for _, id := range []string{"skill.install", "skill.install_catalog", "mcp_service.create"} {
-		op, ok := catalog.Get(id)
-		require.True(t, ok, id)
-		assert.True(t, op.AlwaysConfirm, id)
-		assert.True(t, Access{Level: types.AssistantAccessAutoWrite}.NeedsApproval(op), id)
-	}
-	install, _ := catalog.Get("skill.install")
-	source, _ := install.Param("source")
-	assert.True(t, source.Required)
-	assert.Equal(t, "source", install.LabelParam)
-
-	call, err := install.Build(map[string]json.RawMessage{
-		"sandbox_config_id": json.RawMessage(`"cfg-1"`),
-		"source":            json.RawMessage(`"https://github.com/acme/skills/tree/main/pdf"`),
-	})
-	require.NoError(t, err)
-	assert.Equal(t, "/api/v1/sandbox-configs/cfg-1/skills", call.Path)
-	assert.JSONEq(t, `{"source":"https://github.com/acme/skills/tree/main/pdf"}`, string(call.Body))
+	op, ok := catalog.Get("mcp_service.create")
+	require.True(t, ok)
+	assert.True(t, op.AlwaysConfirm)
+	assert.True(t, Access{Level: types.AssistantAccessAutoWrite}.NeedsApproval(op))
+	// Skill install operations were removed from this fork together with their
+	// HTTP routes (MGI build).
+	_, ok = catalog.Get("skill.install")
+	assert.False(t, ok)
 }
 
 func TestBuiltinInfrastructureProjections(t *testing.T) {
@@ -105,18 +88,6 @@ func TestBuiltinInfrastructureProjections(t *testing.T) {
 		"auth_config":{"auth_type":"api_key","api_key_header":"X-Key","custom_headers":{"Authorization":"x"}},
 		"credentials":{"api_key":{"configured":true}}}}`))
 
-	assert.JSONEq(t, `[{"skill_id":"s1","name":"pdf","enabled":true,"status":"ready","missing_envs":["API_TOKEN"]}]`,
-		project("skill.list_installed", `{"data":[{"id":"s1","name":"pdf","enabled":true,"status":"ready",
-		"bundle_sha256":"abc","install_session_id":"sess","missing_envs":["API_TOKEN"],
-		"envs":[{"name":"API_TOKEN","required":true,"is_set":false}]}]}`))
-
-	assert.JSONEq(t, `[{"catalog_skill_id":"c1","name":"pdf","installed_on":["cfg-1"]}]`,
-		project("skill.list_catalog", `{"data":[{"id":"c1","name":"pdf","installed_on":["cfg-1"],
-		"installations":[{"skill_id":"s1","sandbox_config_id":"cfg-1"}]}]}`))
-
-	assert.JSONEq(t, `{"success":false,"started":["cfg-1"],"failed":["cfg-2: not found"]}`,
-		project("skill.install_catalog", `{"success":false,"data":{"installs":{"cfg-1":"s1"},
-		"errors":{"cfg-2":"not found"},"started":["cfg-1"],"failed":["cfg-2: not found"]}}`))
 }
 
 func TestModelCopyOnlyAcceptsSourceAndNewDisplayName(t *testing.T) {

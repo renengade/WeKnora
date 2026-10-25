@@ -24,8 +24,6 @@ import (
 // @Success      200  {object}  handler.DataResponse{data=[]service.SkillCatalogView}
 // @Security     Bearer
 // @Security     ApiKeyAuth
-// @x-agent      {"id":"skill.list_catalog","risk":"read","max_items":200}
-// @x-agent-hint "Lists the skills already added to this workspace, with the sandbox config ids each is installed_on. skill.install_catalog puts one onto more sandboxes without fetching it again; for a skill not listed here, use skill.install with its source."
 // @Router       /skills/catalog [get]
 func (h *SkillHandler) ListCatalog(c *gin.Context) {
 	if h.catalog == nil {
@@ -50,7 +48,6 @@ func (h *SkillHandler) ListCatalog(c *gin.Context) {
 // @Failure      404  {object}  apperrors.AppError  "Skill not found"
 // @Security     Bearer
 // @Security     ApiKeyAuth
-// @x-agent      {"id":"skill.get_catalog","risk":"read"}
 // @Router       /skills/catalog/{id} [get]
 func (h *SkillHandler) GetCatalog(c *gin.Context) {
 	if h.catalog == nil {
@@ -189,8 +186,6 @@ type catalogInstallResponse struct {
 // @Success      202  {object}  handler.catalogInstallResponse
 // @Security     Bearer
 // @Security     ApiKeyAuth
-// @x-agent      {"id":"skill.install_catalog","risk":"write","role":"admin","target":"skill.get_catalog","label":"name","always_confirm":true,"root":""}
-// @x-agent-hint "Installs a workspace skill from skill.list_catalog onto sandboxes, reusing its stored bundle. Like skill.install it runs as root in each image and always asks the user, and each install takes minutes; check them with skill.list_installed."
 // @Router       /skills/catalog/{id}/install [post]
 func (h *SkillHandler) InstallCatalog(c *gin.Context) {
 	if h.catalog == nil {
