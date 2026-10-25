@@ -32,7 +32,7 @@ output_dir="$(cd "$output_dir" && pwd)"
 build_dir="$(mktemp -d /tmp/weknora-bsk-build.XXXXXX)"
 trap 'rm -rf "$build_dir"' EXIT
 
-git clone --no-checkout https://github.com/Tencent/BrowserSkill.git "$build_dir/source"
+git clone --no-checkout "${BROWSERSKILL_REPO_URL:-https://github.com/Tencent/BrowserSkill.git}" "$build_dir/source"
 git -C "$build_dir/source" checkout --detach "$source_commit"
 (
   cd "$build_dir/source"

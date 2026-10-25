@@ -16,10 +16,10 @@ const access = (role: string | null, unsupported: string[] = [], superuser = fal
 })
 
 test('toolbox contains only the agreed tools; infrastructure and secrets stay in settings', () => {
-  assert.deepEqual(TOOLBOX_ITEMS.map((item) => item.key), ['skills', 'mcp', 'browserconnection'])
+  assert.deepEqual(TOOLBOX_ITEMS.map((item) => item.key), ['mcp', 'browserconnection'])
   const lookup = (key: string) => key.split('.').reduce<any>((node, part) => node?.[part], zhCN)
   for (const item of TOOLBOX_ITEMS) {
-    for (const key of [item.title, item.description, 'help' in item ? item.help : undefined,
+    for (const key of [item.title, item.description,
       'action' in item ? item.action : undefined]) {
       if (key) assert.equal(typeof lookup(key), 'string', key)
     }
@@ -31,26 +31,24 @@ test('toolbox contains only the agreed tools; infrastructure and secrets stay in
 
 test('toolbox preserves role and deployment gates, including workspace switches', () => {
   for (const role of ['viewer', 'contributor']) {
-    assert.equal(canAccessToolboxSection('skills', access(role)), false)
     assert.equal(canAccessToolboxSection('mcp', access(role)), false)
     assert.equal(canAccessToolboxSection('browserconnection', access(role)), true)
   }
-  assert.equal(canAccessToolboxSection('skills', access('admin')), true)
-  assert.equal(canAccessToolboxSection('skills', access('owner', ['settings.sandbox'])), false)
+  assert.equal(canAccessToolboxSection('mcp', access('admin')), true)
   assert.equal(canAccessToolboxSection('mcp', access('owner', ['settings.mcp'])), false)
   assert.equal(canAccessToolboxSection('mcp', access(null)), false)
   assert.equal(canAccessToolboxSection('mcp', access(null, [], true)), true)
   assert.equal(canAccessToolboxSection('mcp', access(null, ['settings.mcp'], true)), false)
   const role = ref('admin')
-  const allowed = computed(() => canAccessToolboxSection('skills', access(role.value)))
+  const allowed = computed(() => canAccessToolboxSection('mcp', access(role.value)))
   assert.equal(allowed.value, true)
   role.value = 'viewer'
   assert.equal(allowed.value, false)
 })
 
-test('skill shortcut retains its target sandbox without leaking it to other tools', () => {
-  assert.deepEqual(toolboxLocation('skills', 'sandbox-123'), {
-    path: '/platform/toolbox/skills', query: { sandboxId: 'sandbox-123' },
+test('toolbox shortcuts never leak a sandbox id into the query', () => {
+  assert.deepEqual(toolboxLocation('mcp', 'sandbox-123'), {
+    path: '/platform/toolbox/mcp', query: {},
   })
   assert.deepEqual(toolboxLocation('browserconnection', 'sandbox-123'), {
     path: '/platform/toolbox/browserconnection', query: {},
@@ -75,8 +73,8 @@ test('legacy shortcuts close settings and route to the selected tool and sandbox
     uiStore: { closeSettings: () => calls.push('close') },
     router: { push: (location: unknown) => calls.push(location) },
   })
-  assert.equal(redirect('skills', 'sandbox-123'), true)
-  assert.deepEqual(calls, ['close', toolboxLocation('skills', 'sandbox-123')])
+  assert.equal(redirect('mcp', 'sandbox-123'), true)
+  assert.deepEqual(calls, ['close', toolboxLocation('mcp', 'sandbox-123')])
   calls.length = 0
   assert.equal(redirect('sandbox'), false)
   assert.deepEqual(calls, [])
@@ -85,7 +83,7 @@ test('legacy shortcuts close settings and route to the selected tool and sandbox
 })
 
 test('settings no longer render moved panels, and old bookmarks reach toolbox', () => {
-  for (const component of ['SkillSettings', 'McpSettings', 'BrowserConnectionSettings']) {
+  for (const component of ['McpSettings', 'BrowserConnectionSettings']) {
     assert.equal(settings.includes(`<${component}`), false)
   }
   for (const item of TOOLBOX_ITEMS) {
@@ -96,5 +94,5 @@ test('settings no longer render moved panels, and old bookmarks reach toolbox', 
   assert.match(router, /toolboxLocation\(to\.query\.section/)
   const page = readFileSync(new URL('../views/toolbox/Toolbox.vue', import.meta.url), 'utf8')
   assert.match(page, /if \(!selectedItem\.value && fallback\) void router\.replace\(toolboxLocation\(fallback\.key\)\)/)
-  assert.match(page, /:key="sandboxId"\s+:initial-sandbox-id="sandboxId"/)
+  assert.doesNotMatch(page, /sandboxId/)
 })

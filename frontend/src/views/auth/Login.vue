@@ -96,8 +96,8 @@
     </div>
 
     <!-- Logo - Top Left -->
-    <a href="https://github.com/Tencent/WeKnora" target="_blank" class="header-logo" :title="$t('common.github')">
-      <img src="@/assets/img/weknora.png" alt="WeKnora" class="logo-image" />
+    <a href="https://bgi-iam.genomics.cn/esc-sso/login/page" target="_blank" class="header-logo">
+      <img src="@/assets/img/weknora.png" alt="BGI" class="logo-image" />
     </a>
 
     <!-- Header Links - Top Right -->
@@ -1197,6 +1197,8 @@ onMounted(async () => {
   .logo-image {
     width: 120px;
     height: auto;
+    /* 登录页为深绿色底，黑色字体的 logo 统一反转为白色以自适应 */
+    filter: brightness(0) invert(1);
   }
 }
 

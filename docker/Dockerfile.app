@@ -3,6 +3,11 @@ FROM --platform=$TARGETPLATFORM node:24-bookworm-slim@sha256:ba849c60be29959425b
 WORKDIR /build
 # Use the same optional Debian mirror as the Go builder and runtime stages.
 ARG APK_MIRROR_ARG
+# Optional GitHub mirror for environments where github.com is unreachable,
+# e.g. https://gh-proxy.com/https://github.com/Tencent/BrowserSkill.git
+ARG BROWSERSKILL_REPO_URL=https://github.com/Tencent/BrowserSkill.git
+# Optional npm registry mirror for the pnpm install inside the build script.
+ARG NPM_REGISTRY=
 # This base image has no CA certificates. Install them from the original HTTP
 # Debian source before swapping in a mirror: mirrors.tencent.com redirects
 # apt to HTTPS, and that handshake fails without a trust store.
@@ -21,7 +26,9 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --pr
 COPY scripts/build_browserskill.sh scripts/browserskill-release.json ./scripts/
 ARG TARGETOS
 ARG TARGETARCH
-RUN bash scripts/build_browserskill.sh /opt/weknora/browserskill "${TARGETOS}/${TARGETARCH}"
+RUN BROWSERSKILL_REPO_URL="$BROWSERSKILL_REPO_URL" \
+    NPM_CONFIG_REGISTRY="${NPM_REGISTRY:-https://registry.npmjs.org}" \
+    bash scripts/build_browserskill.sh /opt/weknora/browserskill "${TARGETOS}/${TARGETARCH}"
 
 # Build stage
 FROM golang:1.26-bookworm AS builder

@@ -1,16 +1,7 @@
 import { SETTINGS_SECTION_MIN_ROLE, type SettingsRoleKey } from './settingsAccess'
 import { SETTINGS_SECTION_CAPABILITY, type DeploymentCapabilityKey } from './deploymentCapabilities'
-import { SKILL_ICON } from '../types/mention'
 
 export const TOOLBOX_ITEMS = [
-  {
-    key: 'skills',
-    icon: SKILL_ICON,
-    title: 'settings.skills.title',
-    description: 'settings.skills.description',
-    help: 'settings.skills.helpTooltip',
-    action: 'settings.skills.addSkill',
-  },
   {
     key: 'mcp',
     icon: 'tools',
@@ -34,7 +25,7 @@ export function isToolboxSection(section: unknown): section is ToolboxSection {
 export function toolboxLocation(section?: ToolboxSection, sandboxId?: string) {
   return {
     path: section ? `/platform/toolbox/${section}` : '/platform/toolbox',
-    query: section === 'skills' && sandboxId ? { sandboxId } : {},
+    query: {},
   }
 }
 

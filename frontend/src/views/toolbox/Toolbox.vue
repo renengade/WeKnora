@@ -14,10 +14,6 @@
       </div>
       <p class="toolbox-subtitle" style="--wails-draggable: drag">
         {{ t(selectedItem?.description ?? 'toolbox.description') }}
-        <t-tooltip v-if="selectedItem && 'help' in selectedItem" :content="t(selectedItem.help)" placement="bottom"
-          overlay-class-name="skill-settings__help-tooltip">
-          <t-icon name="help-circle" class="toolbox-help" :aria-label="t(selectedItem.help)" />
-        </t-tooltip>
       </p>
     </header>
 
@@ -43,9 +39,7 @@
 
       <section v-if="selectedItem" class="toolbox-main" role="tabpanel">
         <div class="toolbox-panel">
-          <SkillSettings v-if="selectedItem.key === 'skills'" ref="panel" :key="sandboxId"
-            :initial-sandbox-id="sandboxId" @count="counts.skills = $event" />
-          <McpSettings v-else-if="selectedItem.key === 'mcp'" ref="panel" @count="counts.mcp = $event" />
+          <McpSettings v-if="selectedItem.key === 'mcp'" ref="panel" @count="counts.mcp = $event" />
           <BrowserConnectionSettings v-else-if="selectedItem.key === 'browserconnection'" />
         </div>
       </section>
@@ -62,7 +56,6 @@ import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useBrowserConnectionStore } from '@/stores/browserConnection'
 import { useDeploymentCapabilitiesStore } from '@/stores/deploymentCapabilities'
-import { listSkillCatalog } from '@/api/skill'
 import { listMCPServices } from '@/api/mcp-service'
 import {
   TOOLBOX_ITEMS,
@@ -73,7 +66,6 @@ import {
 import ResourceIcon from '@/components/icons/ResourceIcon.vue'
 import BrowserIcon from '@/components/icons/BrowserIcon.vue'
 import EmptyState from '@/components/EmptyState.vue'
-import SkillSettings from '@/views/settings/SkillSettings.vue'
 import McpSettings from '@/views/settings/McpSettings.vue'
 import BrowserConnectionSettings from '@/views/settings/BrowserConnectionSettings.vue'
 
@@ -86,7 +78,6 @@ const capabilities = useDeploymentCapabilitiesStore()
 const panel = ref<{ openAdd?: () => void } | null>(null)
 const counts = reactive<Partial<Record<ToolboxSection, number>>>({})
 const requestedSection = computed(() => typeof route.params.section === 'string' ? route.params.section : '')
-const sandboxId = computed(() => typeof route.query.sandboxId === 'string' ? route.query.sandboxId : '')
 const visibleItems = computed(() => TOOLBOX_ITEMS.filter((item) => canAccessToolboxSection(item.key, {
   currentTenantRole: authStore.currentTenantRole,
   canAccessAllTenants: authStore.canAccessAllTenants,
@@ -115,7 +106,6 @@ watch([selectedItem, visibleItems], () => {
 
 // Tab badges for tools that are not open; the open panel keeps its own badge current.
 const summaries: Record<ToolboxSection, () => Promise<void>> = {
-  skills: async () => { counts.skills = (await listSkillCatalog())?.data?.length ?? 0 },
   mcp: async () => { counts.mcp = (await listMCPServices()).length },
   browserconnection: async () => { if (!browserConnection.loaded) await browserConnection.refresh() },
 }

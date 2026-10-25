@@ -721,15 +721,6 @@
       </section>
 
       <section v-if="currentStepKey === 'runtime'" class="setting-drawer__section">
-        <h4 class="setting-drawer__section-title">{{ $t('settings.sandbox.skillRollout') }}</h4>
-        <p class="section-help section-help--under-title">{{ $t('settings.sandbox.skillRolloutHint') }}</p>
-        <t-radio-group v-model="skillRollout" class="skill-rollout-group">
-          <t-radio value="next_turn">{{ $t('settings.sandbox.skillRolloutNextTurn') }}</t-radio>
-          <t-radio value="new_session">{{ $t('settings.sandbox.skillRolloutNewSession') }}</t-radio>
-        </t-radio-group>
-      </section>
-
-      <section v-if="currentStepKey === 'runtime'" class="setting-drawer__section">
         <h4 class="setting-drawer__section-title">{{ $t('settings.sandbox.allocationMode') }}</h4>
         <p class="section-help section-help--under-title">{{ $t('settings.sandbox.allocationModeHint') }}</p>
         <t-radio-group v-model="allocationMode" class="allocation-mode-group">

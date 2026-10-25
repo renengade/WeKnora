@@ -21,14 +21,6 @@
               <line x1="2.94" y1="12.5" x2="15.06" y2="12.5" stroke="currentColor" stroke-width="1.2"
                 stroke-linecap="round" />
             </svg>
-            <!-- WeKnora Cloud 使用自定义 W 图标 -->
-            <svg v-else-if="item.key === 'weknoracloud'" width="17" height="17" viewBox="0 0 18 18"
-              fill="none" xmlns="http://www.w3.org/2000/svg" class="nav-icon">
-              <rect x="1.5" y="1.5" width="15" height="15" rx="3.5" stroke="currentColor" stroke-width="1.2"
-                fill="none" />
-              <path d="M4.5 5.5L6.5 12.5L9 7.5L11.5 12.5L13.5 5.5" stroke="currentColor" stroke-width="1.3"
-                stroke-linecap="round" stroke-linejoin="round" fill="none" />
-            </svg>
             <!-- 沙箱：隔离运行窗口，避免和 Ollama / 系统设置共用 server -->
             <svg v-else-if="item.key === 'sandbox'" width="17" height="17" viewBox="0 0 18 18" fill="none"
               xmlns="http://www.w3.org/2000/svg" class="nav-icon">
@@ -85,11 +77,6 @@
           <OllamaSettings />
         </div>
 
-        <!-- WeKnora Cloud -->
-        <div v-if="currentSection === 'weknoracloud'" class="section">
-          <WeKnoraCloudSettings />
-        </div>
-
         <!-- 模型配置 -->
         <div v-if="currentSection === 'models'" class="section">
           <ModelSettings />
@@ -118,11 +105,6 @@
         <!-- 我的记忆（个人记忆管理） -->
         <div v-if="currentSection === 'mymemory'" class="section">
           <MemorySettings />
-        </div>
-
-        <!-- 沙箱密钥（成员自己的技能 / 沙箱密钥） -->
-        <div v-if="currentSection === 'envvars'" class="section">
-          <EnvVarSettings />
         </div>
 
         <!-- 向量数据库引擎 -->
@@ -218,14 +200,13 @@ import OllamaSettings from './OllamaSettings.vue'
 import WebSearchSettings from './WebSearchSettings.vue'
 import ChatHistorySettings from './ChatHistorySettings.vue'
 import MemorySettings from './MemorySettings.vue'
-import EnvVarSettings from './EnvVarSettings.vue'
+
 import MemoryWorkspaceSettings from './MemoryWorkspaceSettings.vue'
 import AssistantSettings from './AssistantSettings.vue'
 import VectorStoreSettings from './VectorStoreSettings.vue'
 import ParserEngineSettings from './ParserEngineSettings.vue'
 import StorageBackendSettings from './StorageBackendSettings.vue'
 import SandboxSettings from './SandboxSettings.vue'
-import WeKnoraCloudSettings from './WeKnoraCloudSettings.vue'
 import TenantMembers from './TenantMembers.vue'
 import SystemSettings from '@/views/system/SystemSettings.vue'
 import RuntimeQueues from '@/views/system/RuntimeQueues.vue'
@@ -241,9 +222,8 @@ import {
   SETTINGS_SECTION_MIN_ROLE,
   SYSTEM_ADMIN_SETTINGS_SECTIONS,
 } from '@/config/settingsAccess'
-import { SETTINGS_SECTION_CAPABILITY, skillSettingsSupported } from '@/config/deploymentCapabilities'
+import { SETTINGS_SECTION_CAPABILITY } from '@/config/deploymentCapabilities'
 import { isToolboxSection, toolboxLocation } from '@/config/toolbox'
-import { hostSkillsOnly } from '@/utils/skillTarget'
 import {
   buildSettingsRouteQuery,
   integrationSectionKey,
@@ -258,17 +238,7 @@ const router = useRouter()
 const uiStore = useUIStore()
 const authStore = useAuthStore()
 const deploymentCapabilities = useDeploymentCapabilitiesStore()
-const { t, te } = useI18n()
-const hostSkills = computed(() => hostSkillsOnly(
-  deploymentCapabilities.isSupported('settings.sandbox.remote'),
-  deploymentCapabilities.isSupported('settings.sandbox.host'),
-))
-function envNavLabel(): string {
-  const hostKey = 'envVarSettings.host.title'
-  if (hostSkills.value && te(hostKey)) return t(hostKey)
-  return t('envVarSettings.title')
-}
-
+const { t } = useI18n()
 const currentSection = ref<string>('general')
 const currentSubSection = ref<string>('')
 const expandedMenus = ref<string[]>([])
@@ -324,9 +294,6 @@ const isSectionSupported = (key: string): boolean => {
       INTEGRATION_TAB_CAPABILITY[integrationTabFromSection(key)],
     )
   }
-  if (key === 'skills' || key === 'envvars') {
-    return skillSettingsSupported(deploymentCapabilities.capabilities)
-  }
   return deploymentCapabilities.isSupported(SETTINGS_SECTION_CAPABILITY[key])
 }
 
@@ -360,7 +327,6 @@ const navItems = computed(() => {
   const all: NavItem[] = [
     { key: 'general', icon: 'setting', label: t('general.title') },
     { key: 'ollama', icon: 'server', label: 'Ollama' },
-    { key: 'weknoracloud', icon: '', label: 'WeKnora Cloud' },
     { key: 'models', icon: 'control-platform', label: t('settings.modelManagement') },
     { key: 'websearch', icon: 'search', label: t('settings.webSearchConfig') },
     { key: 'chathistory', icon: 'chat', label: t('chatHistorySettings.title') },
@@ -378,7 +344,6 @@ const navItems = computed(() => {
     { key: 'userprofile', icon: 'user', label: t('userProfile.title') },
     { key: 'mymemory', icon: 'bookmark', label: t('memorySettings.title') },
     { key: 'assistant', icon: 'compass', label: t('assistantSettings.title') },
-    { key: 'envvars', icon: 'key', label: envNavLabel() },
     { key: 'tenant', icon: 'user-circle', label: t('settings.tenantInfo') },
     { key: 'members', icon: 'usergroup', label: t('tenantMember.title') },
     ...integrationItems,
@@ -403,7 +368,7 @@ const navGroups = computed<NavGroup[]>(() => {
     {
       key: 'account',
       label: t('settings.navGroups.account'),
-      items: pickItems(['general', 'userprofile', 'assistant', 'mymemory', 'envvars']),
+      items: pickItems(['general', 'userprofile', 'assistant', 'mymemory']),
     },
     {
       key: 'workspace',
@@ -413,7 +378,7 @@ const navGroups = computed<NavGroup[]>(() => {
     {
       key: 'models_runtime',
       label: t('settings.navGroups.modelsRuntime'),
-      items: pickItems(['models', 'ollama', 'weknoracloud']),
+      items: pickItems(['models', 'ollama']),
     },
     {
       key: 'integrations',

@@ -296,8 +296,7 @@ router.beforeEach(async (to, from, next) => {
 
   // Preserve bookmarks for tools that have moved out of Settings.
   if (to.path === '/platform/settings' && isToolboxSection(to.query.section)) {
-    next({ ...toolboxLocation(to.query.section,
-      typeof to.query.sandboxId === 'string' ? to.query.sandboxId : undefined), replace: true })
+    next({ ...toolboxLocation(to.query.section), replace: true })
     return
   }
 

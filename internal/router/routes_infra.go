@@ -54,7 +54,6 @@ func RegisterModelRoutes(
 func RegisterSandboxConfigRoutes(
 	r *gin.RouterGroup,
 	h *handler.SandboxConfigHandler,
-	skills *handler.SandboxSkillHandler,
 	g *rbacGuards,
 ) {
 	configs := g.apiKeyGroup(r.Group("/sandbox-configs"), apiKeyFullAccess())
@@ -69,22 +68,7 @@ func RegisterSandboxConfigRoutes(
 		configs.GET("/:id/sandboxes", g.Admin(), h.Inventory)
 		configs.GET("/:id/user-sandboxes", g.Admin(), h.ListUserSandboxes)
 		configs.POST("/:id/user-sandboxes/:digest/release", g.Admin(), h.ReleaseUserSandbox)
-		// Skills are Admin+ throughout, reads included: an upload drives a
-		// root shell whose output is baked into the image every session of
-		// this config boots, and the listing names what that image carries.
-		configs.GET("/:id/skills", g.Admin(), skills.List)
-		configs.POST("/:id/skills", g.Admin(), skills.Upload)
-		configs.GET("/:id/skills/:skillId", g.Admin(), skills.Get)
-		configs.GET("/:id/skills/:skillId/files", g.Admin(), skills.ListFiles)
-		configs.GET("/:id/skills/:skillId/files/content", g.Admin(), skills.GetFile)
-		configs.POST("/:id/skills/:skillId/reinstall", g.Admin(), skills.Reinstall)
-		configs.GET("/:id/skills/:skillId/guidance", g.Admin(), skills.InstallGuidance)
-		configs.POST("/:id/skills/:skillId/guidance", g.Admin(), skills.SteerInstall)
-		configs.POST("/:id/skills/:skillId/stop", g.Admin(), skills.Stop)
-		configs.PATCH("/:id/skills/:skillId", g.Admin(), skills.Patch)
-		configs.DELETE("/:id/skills/:skillId", g.Admin(), skills.Delete)
-		configs.GET("/:id/skills/:skillId/install-events", g.Admin(), skills.InstallEvents)
-		configs.GET("/:id/skills/:skillId/transcript", g.Admin(), skills.InstallTranscript)
+		// 二开（MGI）：技能（ClawHub/SkillHub/ZIP 安装与管理）接口已移除。
 	}
 }
 
@@ -349,13 +333,4 @@ func RegisterDataSourceRoutes(
 		ds.GET("/:id/logs", g.Viewer(), handler.GetSyncLogs)
 		ds.GET("/logs/:log_id", g.Viewer(), handler.GetSyncLog)
 	}
-}
-
-// RegisterWeKnoraCloudRoutes 注册 WeKnoraCloud 初始化路由
-// RegisterWeKnoraCloudRoutes registers the WeKnoraCloud credential
-// management endpoints. SaveCredentials persists external SaaS keys
-// for the tenant (Admin+), Status is a low-risk readiness probe (Viewer+).
-func RegisterWeKnoraCloudRoutes(r *gin.RouterGroup, handler *handler.WeKnoraCloudHandler, g *rbacGuards) {
-	g.apiKeyRoute(r, http.MethodPost, "/weknoracloud/credentials", apiKeyManageModels(apiKeyFullAccess()), g.Admin(), handler.SaveCredentials)
-	g.apiKeyRoute(r, http.MethodGet, "/models/weknoracloud/status", apiKeyManageModels(apiKeyFullAccess()), g.Viewer(), handler.Status)
 }

@@ -459,7 +459,6 @@ func TestLegacyProviderDetection(t *testing.T) {
 		"https://api.lkeap.cloud.tencent.com/v1":            "lkeap",
 		"https://integrate.api.nvidia.com/v1":               "nvidia",
 		"https://api.novita.ai/openai/v1":                   "novita",
-		"https://weknora.weixin.qq.com":                     "weknoracloud",
 		"http://localhost:8000/v1":                          "generic",
 		"":                                                  "generic",
 	}
@@ -628,28 +627,6 @@ func TestEveryChatModelRequestShape(t *testing.T) {
 			})
 		}
 	}
-}
-
-// TestWeKnoraCloudTransport pins the two things that vendor needs and no
-// other vendor does: a signed request to a non-standard path, and plain-text
-// content because the endpoint rejects multi-part messages.
-func TestWeKnoraCloudTransport(t *testing.T) {
-	v, ok := modelruntime.Get("weknoracloud")
-	require.True(t, ok)
-	require.NotNil(t, v.Endpoint, "WeKnora Cloud needs a custom endpoint")
-	url, _ := v.Endpoint(providers.EndpointRequest{
-		BaseURL: "https://weknora.weixin.qq.com", ModelType: types.ModelTypeKnowledgeQA,
-	})
-	assert.Equal(t, "https://weknora.weixin.qq.com/api/v1/chat/completions", url)
-
-	resolved := resolve(t, "weknoracloud", "any-model")
-	assert.False(t, resolved.OpenAICompletions.SupportsMultiContent,
-		"WeKnora Cloud needs multi-content flattened to text")
-
-	cfg := &chat.ChatConfig{Provider: "weknoracloud", ModelName: "any-model", AppID: "app", AppSecret: "secret"}
-	body := buildBody(t, cfg, &api.Options{}, false)
-	messages, _ := json.Marshal(body["messages"])
-	assert.Contains(t, string(messages), `"content":"hi"`, "content must be a plain string")
 }
 
 // TestGeminiLegacyBaseURLKeepsOpenAIProtocol covers the rows that exist in

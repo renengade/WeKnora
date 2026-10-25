@@ -413,12 +413,6 @@ func (h *SystemHandler) ListParserEngines(c *gin.Context) {
 			if tenant.ParserEngineConfig != nil {
 				overrides = tenant.ParserEngineConfig.ToOverridesMap()
 			}
-			if creds := tenant.Credentials.GetWeKnoraCloud(); creds != nil {
-				if overrides == nil {
-					overrides = make(map[string]string)
-				}
-				overrides["weknoracloud_app_id"] = creds.AppID
-			}
 		}
 	}
 
@@ -475,12 +469,6 @@ func (h *SystemHandler) ReconnectDocReader(c *gin.Context) {
 			if tenant.ParserEngineConfig != nil {
 				overrides = tenant.ParserEngineConfig.ToOverridesMap()
 			}
-			if creds := tenant.Credentials.GetWeKnoraCloud(); creds != nil {
-				if overrides == nil {
-					overrides = make(map[string]string)
-				}
-				overrides["weknoracloud_app_id"] = creds.AppID
-			}
 		}
 	}
 	remoteEngines := h.fetchRemoteEngines(c.Request.Context(), h.documentReader, overrides)
@@ -516,12 +504,6 @@ func (h *SystemHandler) CheckParserEngines(c *gin.Context) {
 	merged := types.MergeParserEngineConfigForUpdate(&body, existing)
 	overrides := merged.ToOverridesMap()
 	if tenant != nil {
-		if creds := tenant.Credentials.GetWeKnoraCloud(); creds != nil {
-			if overrides == nil {
-				overrides = make(map[string]string)
-			}
-			overrides["weknoracloud_app_id"] = creds.AppID
-		}
 	}
 	reader, docreaderAddr, docreaderTransport := h.resolveDocReader(c.Request.Context(), overrides)
 	connected := reader != nil && reader.IsConnected()
@@ -532,7 +514,7 @@ func (h *SystemHandler) CheckParserEngines(c *gin.Context) {
 
 func (h *SystemHandler) resolveDocReader(ctx context.Context, overrides map[string]string) (interfaces.DocumentReader, string, string) {
 	if len(overrides) > 0 {
-		if addr := strings.TrimSpace(overrides["docreader_addr"]); addr != "" && service.IsWeKnoraCloudDocReaderAddr(addr) {
+		if addr := strings.TrimSpace(overrides["docreader_addr"]); addr != "" {
 			reader := h.ResolveDocumentReader(ctx, addr)
 			return reader, addr, transportFromDocReaderAddr(addr)
 		}
@@ -1264,18 +1246,6 @@ func (h *SystemHandler) checkOBS(c *gin.Context, ctx context.Context, cfg *types
 func (h *SystemHandler) ResolveDocumentReader(ctx context.Context, addr string) interfaces.DocumentReader {
 	if addr == "" {
 		return h.documentReader
-	}
-
-	if service.IsWeKnoraCloudDocReaderAddr(addr) {
-		creds := h.tenantSvc.GetWeKnoraCloudCredentials(ctx)
-		if creds == nil {
-			return nil
-		}
-		reader, err := docparser.NewWeKnoraCloudSignedDocumentReader(creds.AppID, creds.AppSecret)
-		if err != nil {
-			return nil
-		}
-		return reader
 	}
 
 	reader, err := docparser.NewHTTPDocumentReader(addr)

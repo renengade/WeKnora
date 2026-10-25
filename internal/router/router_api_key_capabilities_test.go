@@ -346,11 +346,10 @@ func TestTenantInfrastructureRoutesDeclareSpecificCapabilities(t *testing.T) {
 	RegisterWebSearchProviderRoutes(v1, &handler.WebSearchProviderHandler{}, &handler.WebSearchProviderCredentialsHandler{}, g)
 	RegisterVectorStoreRoutes(v1, &handler.VectorStoreHandler{}, g)
 	RegisterStorageBackendRoutes(v1, &handler.StorageBackendHandler{}, g)
-	RegisterSandboxConfigRoutes(v1, &handler.SandboxConfigHandler{}, &handler.SandboxSkillHandler{}, g)
+	RegisterSandboxConfigRoutes(v1, &handler.SandboxConfigHandler{}, g)
 	RegisterEmbedChannelRoutes(v1, &handler.EmbedChannelHandler{}, g)
 	RegisterIMChannelRoutes(v1, &handler.IMHandler{}, g)
 	RegisterDataSourceRoutes(v1, &handler.DataSourceHandler{}, &handler.DataSourceCredentialsHandler{}, g)
-	RegisterWeKnoraCloudRoutes(v1, &handler.WeKnoraCloudHandler{}, g)
 
 	capabilitiesPolicy := mustLookupAPIKeyPolicy(t, g, http.MethodGet, "/api/v1/system/capabilities")
 	if capabilitiesPolicy.RequireFullAccess || len(capabilitiesPolicy.Capabilities) != 0 {
@@ -380,7 +379,6 @@ func TestTenantInfrastructureRoutesDeclareSpecificCapabilities(t *testing.T) {
 		{http.MethodGet, "/api/v1/embed-channels", types.APIKeyCapabilityManageChannels},
 		{http.MethodGet, "/api/v1/im-channels", types.APIKeyCapabilityManageChannels},
 		{http.MethodGet, "/api/v1/datasource", types.APIKeyCapabilityManageDataSources},
-		{http.MethodGet, "/api/v1/models/weknoracloud/status", types.APIKeyCapabilityManageModels},
 	}
 
 	for _, tc := range cases {
@@ -401,7 +399,7 @@ func TestSandboxConfigRoutesRequireFullAccessOnly(t *testing.T) {
 	g := &rbacGuards{}
 	v1 := gin.New().Group("/api/v1")
 
-	RegisterSandboxConfigRoutes(v1, &handler.SandboxConfigHandler{}, &handler.SandboxSkillHandler{}, g)
+	RegisterSandboxConfigRoutes(v1, &handler.SandboxConfigHandler{}, g)
 
 	cases := []struct {
 		method string
@@ -416,19 +414,7 @@ func TestSandboxConfigRoutesRequireFullAccessOnly(t *testing.T) {
 		{http.MethodGet, "/api/v1/sandbox-configs/:id/sandboxes"},
 		{http.MethodGet, "/api/v1/sandbox-configs/:id/user-sandboxes"},
 		{http.MethodPost, "/api/v1/sandbox-configs/:id/user-sandboxes/:digest/release"},
-		{http.MethodGet, "/api/v1/sandbox-configs/:id/skills"},
-		{http.MethodPost, "/api/v1/sandbox-configs/:id/skills"},
-		{http.MethodGet, "/api/v1/sandbox-configs/:id/skills/:skillId"},
-		{http.MethodGet, "/api/v1/sandbox-configs/:id/skills/:skillId/files"},
-		{http.MethodGet, "/api/v1/sandbox-configs/:id/skills/:skillId/files/content"},
-		{http.MethodPost, "/api/v1/sandbox-configs/:id/skills/:skillId/reinstall"},
-		{http.MethodPost, "/api/v1/sandbox-configs/:id/skills/:skillId/stop"},
-		{http.MethodPatch, "/api/v1/sandbox-configs/:id/skills/:skillId"},
-		{http.MethodDelete, "/api/v1/sandbox-configs/:id/skills/:skillId"},
-		{http.MethodGet, "/api/v1/sandbox-configs/:id/skills/:skillId/install-events"},
-		// The transcript replays the root shell session that built the image,
 		// so it must not be reachable by a scoped key either.
-		{http.MethodGet, "/api/v1/sandbox-configs/:id/skills/:skillId/transcript"},
 	}
 
 	for _, tc := range cases {
@@ -439,35 +425,6 @@ func TestSandboxConfigRoutesRequireFullAccessOnly(t *testing.T) {
 			}
 			if len(policy.Capabilities) != 0 {
 				t.Fatalf("sandbox config routes must not be granted by a scoped capability: %#v", policy.Capabilities)
-			}
-		})
-	}
-}
-
-func TestSkillCatalogWriteRoutesRequireFullAccess(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	g := &rbacGuards{}
-	v1 := gin.New().Group("/api/v1")
-	RegisterSkillRoutes(v1, &handler.SkillHandler{}, g)
-
-	cases := []struct {
-		method string
-		path   string
-	}{
-		{http.MethodPost, "/api/v1/skills/catalog"},
-		{http.MethodPost, "/api/v1/skills/catalog/:id/install"},
-		{http.MethodGet, "/api/v1/skills/catalog/:id/files"},
-		{http.MethodGet, "/api/v1/skills/catalog/:id/files/content"},
-		{http.MethodDelete, "/api/v1/skills/catalog/:id"},
-	}
-	for _, tc := range cases {
-		t.Run(tc.method+" "+tc.path, func(t *testing.T) {
-			policy := mustLookupAPIKeyPolicy(t, g, tc.method, tc.path)
-			if !policy.RequireFullAccess {
-				t.Fatal("catalog writes bake into sandbox images and must require full access")
-			}
-			if len(policy.Capabilities) != 0 {
-				t.Fatalf("catalog writes must not be granted by a scoped capability: %#v", policy.Capabilities)
 			}
 		})
 	}

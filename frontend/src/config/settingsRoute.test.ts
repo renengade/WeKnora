@@ -39,13 +39,6 @@ test('settings nav writes section, and keeps a system-settings panel only there'
     { section: 'system-global' },
   )
   assert.deepEqual(
-    buildSettingsRouteQuery(integrationSectionKey('claw'), {
-      section: 'integrations',
-      tab: 'im',
-    }),
-    { section: 'integration-claw' },
-  )
-  assert.deepEqual(
     buildSettingsRouteQuery(integrationSectionKey('api'), {
       section: 'integrations',
       tab: 'im',
@@ -57,7 +50,6 @@ test('settings nav writes section, and keeps a system-settings panel only there'
 
 test('legacy api / integrations / bare-tab query strings normalize to nav keys', () => {
   assert.equal(normalizeSettingsSection('api'), 'integration-api')
-  assert.equal(normalizeSettingsSection('claw'), 'integration-claw')
   assert.equal(normalizeSettingsSection('cli'), 'integration-cli')
   assert.equal(normalizeSettingsSection('mcpserver'), 'integration-mcpserver')
   // 'mcp' is the MCP-client settings page, not the MCP server integration tab.
@@ -76,15 +68,15 @@ test('legacy api / integrations / bare-tab query strings normalize to nav keys',
 test('canonical settings query skips a redundant replace', () => {
   assert.equal(
     settingsQueryUnchanged(
-      { section: 'integration-claw' },
-      { section: 'integration-claw' },
+      { section: 'integration-cli' },
+      { section: 'integration-cli' },
     ),
     true,
   )
   assert.equal(
     settingsQueryUnchanged(
-      { section: 'integrations', tab: 'claw' },
-      { section: 'integration-claw' },
+      { section: 'integrations', tab: 'cli' },
+      { section: 'integration-cli' },
     ),
     false,
   )

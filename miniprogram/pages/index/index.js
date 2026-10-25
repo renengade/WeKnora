@@ -38,9 +38,9 @@ function buildViewModel() {
 Page({
   data: {
     texts: {},
-    knowledgeTitle: "WeKnora 知识库",
+    knowledgeTitle: "MGInora 知识库",
     knowledgeSubtitle: "在微信中选择知识库，导入网页或提问。",
-    needsSettingsText: "请先配置 WeKnora API 地址和 API Key，再加载知识库。",
+    needsSettingsText: "请先配置 MGInora API 地址和 API Key，再加载知识库。",
     openSettingsText: "打开设置",
     knowledgeBaseLabel: "知识库",
     tapToSelectText: "点击选择",

@@ -111,72 +111,22 @@ test('retrieval retention is offered to agents that actually have a knowledge ba
   assert.match(guard, /isAgentMode && hasKnowledgeBase/)
 })
 
-test('skills and sandbox share one editor section', () => {
+test('skill install UI is removed while the sandbox section stays', () => {
   const navItems = source.match(/const navItems = computed\(\(\) => \{([\s\S]*?)^\}\);/m)?.[1]
   assert.ok(navItems, 'expected to find the nav items computed')
+  // The section key stays for sandbox selection, but no skill UI is offered.
   assert.match(navItems, /key: 'skills'/)
-  assert.match(navItems, /icon: SKILL_ICON/)
-  assert.doesNotMatch(navItems, /key: 'sandbox'/)
-
-  const capabilityGroup = source.match(/pickItems\(\['multimodal', 'tools', 'mcp', 'skills'\]\)/)
-  assert.ok(capabilityGroup, 'expected the capability group to list skills without a separate sandbox tab')
-
+  assert.match(navItems, /agent\.editor\.sandboxBackend/)
+  assert.doesNotMatch(navItems, /SKILL_ICON/)
   assert.match(source, /v-show="currentSection === 'skills' && isAgentMode"/)
-  assert.doesNotMatch(source, /currentSection === 'sandbox' && isAgentMode/)
-  assert.match(source, /sandbox: 'skills'/)
   assert.match(source, /formData\.config\.sandbox_config_id/)
-  assert.match(source, /:disabled="!canEnableSkills"/)
   assert.match(source, /sandbox-option/)
-  assert.doesNotMatch(source, /skill-info-box/)
-})
-
-test('agent skill picker uses the catalog and only enables ready installs', () => {
-  assert.match(source, /function autoBindSoleSandbox\(/)
-  assert.match(source, /canEnableSkills/)
-  assert.match(source, /catalogSkillRows/)
-  assert.match(source, /showCatalogSkillList/)
-  assert.match(source, /skillsSelectionMode\.value !== 'none'/)
-  assert.match(source, /:disabled="!skill\.selectable"/)
-  assert.match(source, /catalogSkillGroups/)
-  assert.match(source, /installPartial/)
-  assert.match(source, /installCatalogToCurrent/)
-  assert.match(source, /agent\.editor\.installToThisSandbox/)
-  assert.match(source, /skill-pick-list/)
-  assert.match(source, /skill-pick-group/)
-  assert.match(source, /skill-pick__badge/)
-  assert.match(source, /skillStatusIcon/)
-  assert.match(source, /isSkillBusy/)
-  assert.match(source, /viewInstallProgress/)
-  assert.match(source, /openSkillInstallProgress/)
-  assert.doesNotMatch(source, /await openSkillInstallProgress\(skill\)/)
-  assert.match(source, /SandboxSkillsPanel/)
-  assert.match(source, /focus-skill-id/)
-  assert.match(source, /skillsGroupUnavailable/)
-  assert.match(source, /selectedSandboxSummary/)
-  assert.match(source, /line-clamp: 2/)
-  assert.doesNotMatch(source, /skillsSelectionMode === 'selected' && catalogSkillRows/)
-  assert.doesNotMatch(source, /skill-list-summary/)
-  assert.doesNotMatch(source, /skill-ready-stat/)
-})
-
-test('agent skill picker offers upgrades to admins only and keeps upgrading skills selected', () => {
-  assert.match(source, /from '@\/utils\/skillUpgrade'/)
-  assert.match(source, /const upgradable = Boolean\(inst && installUpgradable\(item, inst\)\)/)
-  assert.match(source, /canInstallSkills\.value && hasSandboxSelected\.value && skill\.upgradable/)
-  assert.match(source, /v-if="canUpgradeSkillRow\(skill\)"/)
-  assert.match(source, /v-else-if="canUpgradeSkillRow\(skill\)"/)
-  assert.match(source, /agent\.editor\.upgradeOnThisSandbox/)
-  // The progress drawer reads admin-only endpoints, so it is not offered to others.
-  assert.match(source, /v-else-if="canInstallSkills && isSkillBusy\(skill\)"/)
-  assert.match(source, /skill\.selectable \|\| \(skill\.installed && isSkillBusy\(skill\)\)/)
-})
-
-test('a skill whose previous version still runs stays selectable during and after an upgrade', () => {
-  assert.match(source, /installEnabled && \(installStatus === 'ready' \|\| Boolean\(servedNote\)\)/)
-  assert.match(source, /v-if="skill\.selectable && skill\.servedNote"/)
-  // Installing the catalog version over a failed upgrade is the upgrade retried.
-  assert.match(source, /installsAnUpgrade\(skill\) \? \$t\('settings\.skills\.upgrade'\) : \$t\('agent\.editor\.installShort'\)/)
-  assert.match(source, /return skill\.upgradable \|\| Boolean\(skill\.servedNote\)/)
+  assert.doesNotMatch(source, /canEnableSkills/)
+  assert.doesNotMatch(source, /catalogSkillRows/)
+  assert.doesNotMatch(source, /autoBindSoleSandbox/)
+  assert.doesNotMatch(source, /SandboxSkillsPanel/)
+  assert.doesNotMatch(source, /skillsSelectionMode/)
+  assert.doesNotMatch(source, /installCatalogToCurrent/)
 })
 
 test('retrieval strategy settings are hidden in agent mode, where search_knowledge ignores them', () => {
@@ -191,7 +141,7 @@ test('retrieval strategy settings are hidden in agent mode, where search_knowled
 async function mcpFixture(t, config) {
   const init = source.match(/const initMcpSelectionMode = \(\) => \{[\s\S]*?^\};/m)?.[0]
   const start = source.indexOf('watch(mcpSelectionMode,')
-  const end = source.indexOf('watch(() => formData.value.config.sandbox_config_id', start)
+  const end = source.indexOf('watch(agentMode', start)
   assert.ok(init && start >= 0 && end > start, 'expected MCP initialization and watchers')
   const state = {
     watch,
