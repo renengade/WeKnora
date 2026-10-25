@@ -943,7 +943,7 @@ export default {
       capabilityMessageHistory: '메시지 기록',
       capabilityMessageHistoryHint: '워크스페이스 채팅 기록 검색과 채팅 기록 통계 조회를 허용합니다. 워크스페이스 설정 권한은 부여하지 않습니다.',
       capabilityManageModels: '모델 관리',
-      capabilityManageModelsHint: '모델 설정, 자격 증명, 연결 테스트 및 MGInora Cloud 자격 증명을 관리합니다.',
+      capabilityManageModelsHint: '모델 설정, 자격 증명, 연결 테스트를 관리합니다.',
       capabilityManageMcpServices: 'MCP 서비스 관리',
       capabilityManageMcpServicesHint: 'MCP 서비스, 자격 증명, 도구 승인 정책 및 이 주체의 OAuth 상태를 관리합니다.',
       capabilityManageDatasources: '데이터 소스 관리',
@@ -2520,10 +2520,6 @@ export default {
         markitdown: {
           name: 'MarkItDown',
           desc: 'Microsoft MarkItDown 변환기 (PDF/Office/HTML 등)'
-        },
-        weknoracloud: {
-          name: 'MGInora Cloud',
-          desc: 'MGInora Cloud를 통한 문서 파싱'
         },
         paddleocr_vl_cloud: {
           name: 'PaddleOCR-VL Cloud',
@@ -7399,59 +7395,6 @@ export default {
       paddleocrVlEndpointPlaceholder: '예: http://your-paddleocr-vl:8080',
       paddleocrVlEndpointHint: 'PaddleOCR-VL 전체 서비스(pipeline) 주소를 입력하세요. /layout-parsing 접미사는 불필요합니다',
       paddleocrVlCloudTokenPlaceholder: 'PaddleOCR-VL AI Studio Token'
-    },
-    weknoraCloud: {
-      title: 'MGInora Cloud',
-      description: 'MGInora Cloud APPID 및 APPSECRET 자격 증명을 설정합니다. 자격 증명은 모델 서비스와 문서 파싱 엔진에 사용됩니다.',
-      viewDocs: '문서 보기',
-      unconfigured: '자격 증명이 설정되지 않았습니다. APPID와 APPSECRET을 입력하세요.',
-      configured: '자격 증명이 설정되었으며 정상 작동 중입니다.',
-      expired: 'MGInora Cloud 자격 증명 만료',
-      expiredDefault: '서비스 재시작 후 암호화 키가 변경되어 저장된 자격 증명을 복호화할 수 없습니다. 다시 입력하세요.',
-      reconfigure: '재설정',
-      appIdLabel: 'APPID',
-      appIdDesc: 'MGInora Cloud 애플리케이션 ID',
-      appIdPlaceholder: 'APPID 입력',
-      appSecretLabel: 'APPSECRET',
-      appSecretDesc: 'MGInora Cloud 애플리케이션 비밀키',
-      appSecretPlaceholder: 'APPSECRET 입력',
-      saveHint: '저장 전 서비스 연결 가능 여부를 확인하고 암호화하여 저장합니다.',
-      saveBtn: '자격 증명 저장',
-      usageTitle: '사용 가이드',
-      usageSteps: '1. APPID / APPSECRET 저장\n2. 아래 「클라우드 모델」에서 chat, embedding, rerank, vlm 추가\n3. 문서 파싱: 지식 베이스 설정 → 파싱 엔진 → MGInora Cloud',
-      fillRequired: 'APPID와 APPSECRET을 입력하세요',
-      saveSuccess: '자격 증명 저장 완료',
-      saveFailed: '자격 증명 저장 실패',
-      credentialConfigured: 'MGInora Cloud 자격 증명이 설정되었습니다.',
-      credentialExpired: '자격 증명이 만료되었습니다. 재설정하세요.',
-      credentialUnconfigured: 'MGInora Cloud 자격 증명이 설정되지 않았습니다. APPID와 APPSECRET을 먼저 설정하세요.',
-      checkingStatus: '자격 증명 상태 확인 중...',
-      goToSettings: '설정으로 이동',
-      modelHintConfigured: 'MGInora Cloud 자격 증명이 설정되었습니다. 지원 모델은',
-      modelHintDocsLink: 'API 문서',
-      addModelsSuccess: '{count}개 모델이 추가되었습니다',
-      addModelsPartial: '{success}개 추가, {failed}개 실패',
-      addModelsFailed: '모델 추가 실패',
-      addModelsEmbeddingFailed: 'Embedding 연결 테스트 실패, 벡터 차원을 가져올 수 없습니다',
-      addModelsDisplayName: {
-        chat: 'MGInora Cloud 대화',
-        embedding: 'MGInora Cloud Embedding',
-        rerank: 'MGInora Cloud ReRank',
-        vllm: 'MGInora Cloud 비전'
-      },
-      modelsSection: {
-        title: '클라우드 모델',
-        descReady: 'MGInora Cloud의 네 가지 표준 모델을 등록하여 대화, 검색, 재정렬, 비전에 사용합니다.',
-        descPending: '위에서 자격 증명을 먼저 저장한 후 여기서 모델을 추가하세요.',
-        statusAdded: '추가됨',
-        statusPending: '자격 증명 필요',
-        addOne: '추가',
-        addAllBtn: '누락 모델 모두 추가 ({count})',
-        addAllConfirm: '확인',
-        confirmAddOne: '{type} 모델 "{name}"을(를) 추가하시겠습니까?',
-        confirmAddAll: '누락된 클라우드 모델 {count}개를 한 번에 추가하시겠습니까?',
-        allReady: '네 가지 클라우드 모델이 모두 준비되었습니다'
-      }
     },
     roleDenied: {
       title: '권한 없음',

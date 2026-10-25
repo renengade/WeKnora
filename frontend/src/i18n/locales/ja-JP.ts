@@ -2251,59 +2251,6 @@ export default {
       desc: '現在のロールではこの設定ページにアクセスできません。このワークスペースの管理者に必要なロールの付与を依頼してください。'
     },
     capabilityUnavailable: 'この機能は現在のデプロイでは利用できません。利用可能なページに戻りました。',
-    weknoraCloud: {
-      title: 'MGInora Cloud',
-      description: 'MGInora CloudのAPPIDとAPPSECRETを設定します。この認証情報はモデルサービスとドキュメント解析エンジンで使用されます。',
-      viewDocs: 'ドキュメントを表示',
-      unconfigured: '認証情報が未設定です。APPIDとAPPSECRETを入力してください。',
-      configured: '認証情報は設定済みで、正常に動作しています。',
-      expired: 'MGInora Cloudの認証情報が無効になりました',
-      expiredDefault: 'サービス再起動後に暗号化キーが変更されました。保存済みの認証情報を復号できません。認証情報を再入力してください。',
-      reconfigure: '再設定',
-      appIdLabel: 'APPID',
-      appIdDesc: 'MGInora CloudのアプリケーションID',
-      appIdPlaceholder: 'APPIDを入力',
-      appSecretLabel: 'APPSECRET',
-      appSecretDesc: 'MGInora Cloudのアプリケーションシークレット',
-      appSecretPlaceholder: 'APPSECRETを入力',
-      saveHint: '認証情報は検証・暗号化されたうえで保存されます。',
-      saveBtn: '認証情報を保存',
-      usageTitle: '利用ガイド',
-      usageSteps: '1. APPIDとAPPSECRETを保存\\\n2. 下の「クラウドモデル」でチャット、埋め込み、リランク、vlmを登録\\\n3. 解析エンジン: ナレッジベース設定 → 解析エンジン → MGInora Cloud',
-      fillRequired: 'APPIDとAPPSECRETを入力してください',
-      saveSuccess: '認証情報を保存しました',
-      saveFailed: '認証情報の保存に失敗しました',
-      credentialConfigured: 'MGInora Cloudの認証情報は設定済みです。',
-      credentialExpired: '認証情報が無効になりました。再設定してください。',
-      credentialUnconfigured: 'MGInora Cloudの認証情報が未設定です。先にAPPIDとAPPSECRETを設定してください。',
-      checkingStatus: '認証情報のステータスを確認中...',
-      goToSettings: '設定へ移動',
-      modelHintConfigured: 'MGInora Cloudの認証情報は設定済みです。対応モデルは以下を参照してください:',
-      modelHintDocsLink: 'APIドキュメント',
-      modelsSection: {
-        title: 'クラウドモデル',
-        descReady: 'チャット、検索、リランク、画像理解（VLM）の4種類のMGInora Cloud標準モデルを登録します。',
-        descPending: 'クラウドモデルを追加する前に、上の認証情報を保存してください。',
-        statusAdded: '追加済み',
-        statusPending: '認証情報が必要',
-        addOne: '追加',
-        addAllBtn: '未追加をすべて追加（{count}）',
-        addAllConfirm: '確認',
-        confirmAddOne: '{type}モデル「{name}」を追加しますか？',
-        confirmAddAll: '未追加のクラウドモデル{count}個をまとめて追加しますか？',
-        allReady: '4つのクラウドモデルはすべて準備完了です'
-      },
-      addModelsSuccess: 'モデルを{count}個追加しました',
-      addModelsPartial: '{success}個を追加し、{failed}個が失敗しました',
-      addModelsFailed: 'モデルの追加に失敗しました',
-      addModelsEmbeddingFailed: '埋め込みモデルの接続テストに失敗し、ベクトルの次元数を検出できませんでした',
-      addModelsDisplayName: {
-        chat: 'MGInora Cloud Chat',
-        embedding: 'MGInora Cloud Embedding',
-        rerank: 'MGInora Cloud ReRank',
-        vllm: 'MGInora Cloud Vision'
-      }
-    },
     system: 'システム設定',
     parser: {
       title: '解析エンジン',
@@ -6669,10 +6616,6 @@ export default {
           name: 'PaddleOCR-VL Cloud',
           desc: 'PaddleOCR-VL Cloud API'
         },
-        weknoracloud: {
-          name: 'MGInora Cloud',
-          desc: 'MGInora Cloudによるドキュメント解析'
-        },
         markitdown: {
           name: 'MarkItDown',
           desc: 'Microsoft MarkItDownコンバータ（PDF/Office/HTMLなど）'
@@ -8189,7 +8132,7 @@ export default {
       capabilityMessageHistory: 'メッセージ履歴',
       capabilityMessageHistoryHint: 'ワークスペースのチャット履歴の検索と、チャット履歴の統計の読み取りができます。ワークスペース設定へのアクセス権は付与されません。',
       capabilityManageModels: 'モデルの管理',
-      capabilityManageModelsHint: 'モデル定義、認証情報、接続確認、MGInora Cloudの認証情報を管理します。',
+      capabilityManageModelsHint: 'モデル定義、認証情報、接続確認を管理します。',
       capabilityManageMcpServices: 'MCPサービスの管理',
       capabilityManageMcpServicesHint: 'このプリンシパルのMCPサービス、認証情報、ツール承認ポリシー、OAuth状態を管理します。',
       capabilityManageDatasources: 'データソースの管理',

@@ -943,7 +943,7 @@ export default {
       capabilityMessageHistory: '消息历史',
       capabilityMessageHistoryHint: '允许检索空间聊天历史并读取聊天历史统计；不授予空间配置权限。',
       capabilityManageModels: '管理模型',
-      capabilityManageModelsHint: '允许管理模型配置、模型凭据、模型连通性测试和 MGInora Cloud 凭据。',
+      capabilityManageModelsHint: '允许管理模型配置、模型凭据和模型连通性测试。',
       capabilityManageMcpServices: '管理 MCP 服务',
       capabilityManageMcpServicesHint: '允许管理 MCP 服务、凭据、工具审批策略和该主体的 OAuth 授权状态。',
       capabilityManageDatasources: '管理数据源',
@@ -2522,10 +2522,6 @@ export default {
         markitdown: {
           name: 'MarkItDown',
           desc: 'Microsoft MarkItDown 文档转换工具（支持 PDF/Office/HTML 等）'
-        },
-        weknoracloud: {
-          name: 'MGInora Cloud',
-          desc: '使用 MGInora Cloud 进行文档解析'
         },
         paddleocr_vl_cloud: {
           name: 'PaddleOCR-VL Cloud',
@@ -7400,59 +7396,6 @@ export default {
       paddleocrVlEndpointPlaceholder: '如 http://your-paddleocr-vl:8080',
       paddleocrVlEndpointHint: '填写 PaddleOCR-VL 完整服务（pipeline）地址，无需 /layout-parsing 后缀',
       paddleocrVlCloudTokenPlaceholder: 'PaddleOCR-VL 飞桨星河社区 Token'
-    },
-    weknoraCloud: {
-      title: 'MGInora Cloud',
-      description: '配置 MGInora Cloud 的 APPID 和 APPSECRET 凭证。凭证用于模型服务和文档解析引擎。',
-      viewDocs: '查看文档',
-      unconfigured: '尚未配置凭证，请填写 APPID 和 APPSECRET',
-      configured: '凭证已配置，状态正常',
-      expired: 'MGInora Cloud 凭证已失效',
-      expiredDefault: '服务重启后加密密钥已变更，已保存的凭证无法解密。请重新填写凭证。',
-      reconfigure: '重新配置',
-      appIdLabel: 'APPID',
-      appIdDesc: 'MGInora Cloud 的应用 ID',
-      appIdPlaceholder: '请输入 APPID',
-      appSecretLabel: 'APPSECRET',
-      appSecretDesc: 'MGInora Cloud 的应用密钥',
-      appSecretPlaceholder: '请输入 APPSECRET',
-      saveHint: '保存后将验证服务可达性并加密存储凭证',
-      saveBtn: '保存凭证',
-      usageTitle: '使用说明',
-      usageSteps: '1. 填写并保存 APPID / APPSECRET\n2. 在下方「云模型接入」中按行添加 chat、embedding、rerank、vlm\n3. 文档解析：知识库设置 → 解析引擎，选择 MGInora Cloud 引擎',
-      fillRequired: '请填写 APPID 和 APPSECRET',
-      saveSuccess: '凭证已保存',
-      saveFailed: '凭证保存失败',
-      credentialConfigured: 'MGInora Cloud 凭证已配置',
-      credentialExpired: '凭证已失效，请重新配置。',
-      credentialUnconfigured: '尚未配置 MGInora Cloud 凭证，请先填写 APPID 和 APPSECRET。',
-      checkingStatus: '正在检查凭证状态...',
-      goToSettings: '前往设置中配置',
-      modelHintConfigured: 'MGInora Cloud 凭证已配置。支持的模型可参考',
-      modelHintDocsLink: '接口文档',
-      addModelsSuccess: '已成功添加 {count} 个模型',
-      addModelsPartial: '已添加 {success} 个，{failed} 个失败',
-      addModelsFailed: '添加模型失败',
-      addModelsEmbeddingFailed: 'Embedding 模型连接测试失败，无法获取向量维度',
-      addModelsDisplayName: {
-        chat: 'MGInora Cloud 对话',
-        embedding: 'MGInora Cloud Embedding',
-        rerank: 'MGInora Cloud ReRank',
-        vllm: 'MGInora Cloud 视觉'
-      },
-      modelsSection: {
-        title: '云模型接入',
-        descReady: '将 MGInora Cloud 提供的四类标准模型注册到当前空间，用于对话、向量检索、重排序与多模态理解。',
-        descPending: '请先保存上方凭证，再在此添加云模型。',
-        statusAdded: '已添加',
-        statusPending: '待配置凭证',
-        addOne: '添加',
-        addAllBtn: '添加全部缺失（{count}）',
-        addAllConfirm: '确认添加',
-        confirmAddOne: '添加 {type} 模型「{name}」？',
-        confirmAddAll: '一次性添加 {count} 个缺失的云模型？',
-        allReady: '四类云模型均已就绪'
-      }
     },
     roleDenied: {
       title: '权限不足',

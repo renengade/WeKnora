@@ -59,14 +59,12 @@ var SettingsSections = map[string]openPageSection{
 	"userprofile":           {"用户信息", "User Profile"},
 	"assistant":             {"助手", "Assistant"},
 	"mymemory":              {"我的记忆", "My memory"},
-	"envvars":               {"沙箱密钥", "Sandbox secrets"},
 	"tenant":                {"空间信息", "Workspace Info"},
 	"members":               {"成员管理", "Members"},
 	"chathistory":           {"消息管理", "Message Management"},
 	"memory":                {"长期记忆", "Long-term memory"},
 	"models":                {"模型管理", "Model Management"},
 	"ollama":                {"Ollama", "Ollama"},
-	"weknoracloud":          {"WeKnora Cloud", "WeKnora Cloud"},
 	"websearch":             {"网络搜索", "Web Search"},
 	"vectorstore":           {"向量数据库引擎", "Vector DB Engine"},
 	"parser":                {"解析引擎", "Parser Engine"},
@@ -206,11 +204,11 @@ const openPageSchema = `{
 	`agent_editor: basic, prompts, model, multimodal, conversation, suggestions, tools, mcp, skills, ` +
 	`knowledge, websearch, retrieval, share. ` +
 	`settings: general (personal preferences: language, theme, font), userprofile, assistant, mymemory, ` +
-	`envvars, tenant, members, chathistory, memory, models, ollama, weknoracloud, websearch, vectorstore, ` +
+	`tenant, members, chathistory, memory, models, ollama, websearch, vectorstore, ` +
 	`parser, storage, sandbox, system (version), system-global, model-catalog, runtime-queues, ` +
 	`platform-api-keys, system-audit-log, integration-im, integration-embed, integration-api, ` +
-	`integration-mcpserver, integration-cli, integration-chrome, integration-claw; ` +
-	`a section the user may not see opens their first one. toolbox: skills, mcp, browserconnection."
+	`integration-mcpserver, integration-cli, integration-chrome; ` +
+	`a section the user may not see opens their first one. toolbox: mcp, browserconnection."
     },
     "panel": {
       "type": "string",
