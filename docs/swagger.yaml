@@ -14317,9 +14317,9 @@ info:
   contact:
     name: WeKnora Github
     url: https://github.com/Tencent/WeKnora
-  description: WeKnora 知识库管理系统 API 文档
+  description: MGInora 知识库管理系统 API 文档
   termsOfService: http://swagger.io/terms/
-  title: WeKnora API
+  title: MGInora API
   version: "1.0"
 paths:
   /agent-chat/{session_id}:

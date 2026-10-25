@@ -18,7 +18,7 @@ const (
 	// Not configurable by tenants — prevents SSRF.
 	defaultKeenableBaseURL = "https://api.keenable.ai"
 	// keenableTitle is the attribution tag Keenable segments integration traffic by.
-	keenableTitle = "WeKnora"
+	keenableTitle = "MGInora"
 	// defaultKeenableResults matches the fallback other providers use when the
 	// caller does not specify a positive maxResults.
 	defaultKeenableResults = 5
