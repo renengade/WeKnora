@@ -44,6 +44,8 @@ services:
         - NPM_REGISTRY=${NPM_REGISTRY:-}
         - GOPROXY_ARG=${GOPROXY_ARG:-}
         - BROWSERSKILL_REPO_URL=${BROWSERSKILL_REPO_URL:-https://github.com/Tencent/BrowserSkill.git}
+        - RUSTUP_DIST_SERVER=${RUSTUP_DIST_SERVER:-}
+        - RUSTUP_UPDATE_ROOT=${RUSTUP_UPDATE_ROOT:-}
     container_name: WeKnora-app
     ports:
       - "${APP_PORT:-8080}:8080"
