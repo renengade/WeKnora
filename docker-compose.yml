@@ -41,6 +41,9 @@ services:
       args:
         - APK_MIRROR_ARG=${APK_MIRROR_ARG:-}
         - WITH_ANYDOC=${WITH_ANYDOC:-1}
+        - NPM_REGISTRY=${NPM_REGISTRY:-}
+        - GOPROXY_ARG=${GOPROXY_ARG:-}
+        - BROWSERSKILL_REPO_URL=${BROWSERSKILL_REPO_URL:-https://github.com/Tencent/BrowserSkill.git}
     container_name: WeKnora-app
     ports:
       - "${APP_PORT:-8080}:8080"
