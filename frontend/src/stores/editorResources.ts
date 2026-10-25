@@ -13,10 +13,8 @@ import {
 } from '@/api/system'
 import { listMCPServices, type MCPService } from '@/api/mcp-service'
 import {
-  listSkillCatalog,
   listSkills,
   type AgentScope,
-  type SkillCatalogItem,
   type SkillInfo,
 } from '@/api/skill'
 import { getAgentTools, getAgentTypePresets, getPlaceholders, type AgentToolCatalog, type AgentTypePreset, type PlaceholdersResponse } from '@/api/agent'
@@ -49,7 +47,6 @@ type EditorResourceKey =
   | 'storageEngine'
   | 'mcpServices'
   | 'skills'
-  | 'skillCatalog'
   | 'agentTypePresets'
   | 'agentTools'
   | 'promptTemplates'
@@ -72,7 +69,6 @@ export const useEditorResourcesStore = defineStore('editorResources', () => {
   const skills = ref<SkillInfo[]>([])
   const skillsAvailable = ref(false)
   const skillsConfigId = ref('')
-  const skillCatalog = ref<SkillCatalogItem[]>([])
   const agentTypePresets = ref<AgentTypePreset[]>([])
   const agentTools = ref<AgentToolCatalog | null>(null)
   const promptTemplates = ref<PromptTemplatesConfig | null>(null)
@@ -155,16 +151,6 @@ export const useEditorResourcesStore = defineStore('editorResources', () => {
     },
   )
 
-  const skillCatalogResource = createCachedResource(
-    async () => {
-      const res = await listSkillCatalog()
-      return Array.isArray(res?.data) ? res.data : []
-    },
-    (rows) => {
-      skillCatalog.value = rows
-    },
-  )
-
   const agentTypePresetsResource = createCachedResource(
     async () => {
       const presetsRes: any = await getAgentTypePresets()
@@ -239,7 +225,6 @@ export const useEditorResourcesStore = defineStore('editorResources', () => {
     storageEngine: storageEngineResource,
     mcpServices: mcpServicesResource,
     skills: skillsResource,
-    skillCatalog: skillCatalogResource,
     agentTypePresets: agentTypePresetsResource,
     agentTools: agentToolsResource,
     promptTemplates: promptTemplatesResource,
@@ -285,10 +270,6 @@ export const useEditorResourcesStore = defineStore('editorResources', () => {
     }
     skillsRequestScope = { key, configId, agent }
     return skillsResource.ensure(force)
-  }
-
-  async function ensureSkillCatalog(force = false): Promise<void> {
-    return skillCatalogResource.ensure(force)
   }
 
   async function ensureAgentTypePresets(force = false): Promise<void> {
@@ -347,7 +328,6 @@ export const useEditorResourcesStore = defineStore('editorResources', () => {
       skillsAvailable.value = false
       skillsConfigId.value = ''
       skillsRequestScope = { key: '', configId: '' }
-      skillCatalog.value = []
       agentTypePresets.value = []
       agentTools.value = null
       promptTemplates.value = null
@@ -367,7 +347,6 @@ export const useEditorResourcesStore = defineStore('editorResources', () => {
     mcpServices,
     skills,
     skillsAvailable,
-    skillCatalog,
     agentTypePresets,
     agentTools,
     promptTemplates,
@@ -379,7 +358,6 @@ export const useEditorResourcesStore = defineStore('editorResources', () => {
     resolveUsableStorageProvider,
     ensureMcpServices,
     ensureSkills,
-    ensureSkillCatalog,
     ensureAgentTypePresets,
     ensureAgentTools,
     ensurePromptTemplates,

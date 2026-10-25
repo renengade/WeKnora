@@ -120,11 +120,6 @@
           <MemorySettings />
         </div>
 
-        <!-- 沙箱密钥（成员自己的技能 / 沙箱密钥） -->
-        <div v-if="currentSection === 'envvars'" class="section">
-          <EnvVarSettings />
-        </div>
-
         <!-- 向量数据库引擎 -->
         <div v-if="currentSection === 'vectorstore'" class="section">
           <VectorStoreSettings />
@@ -218,7 +213,7 @@ import OllamaSettings from './OllamaSettings.vue'
 import WebSearchSettings from './WebSearchSettings.vue'
 import ChatHistorySettings from './ChatHistorySettings.vue'
 import MemorySettings from './MemorySettings.vue'
-import EnvVarSettings from './EnvVarSettings.vue'
+
 import MemoryWorkspaceSettings from './MemoryWorkspaceSettings.vue'
 import AssistantSettings from './AssistantSettings.vue'
 import VectorStoreSettings from './VectorStoreSettings.vue'
@@ -241,9 +236,8 @@ import {
   SETTINGS_SECTION_MIN_ROLE,
   SYSTEM_ADMIN_SETTINGS_SECTIONS,
 } from '@/config/settingsAccess'
-import { SETTINGS_SECTION_CAPABILITY, skillSettingsSupported } from '@/config/deploymentCapabilities'
+import { SETTINGS_SECTION_CAPABILITY } from '@/config/deploymentCapabilities'
 import { isToolboxSection, toolboxLocation } from '@/config/toolbox'
-import { hostSkillsOnly } from '@/utils/skillTarget'
 import {
   buildSettingsRouteQuery,
   integrationSectionKey,
@@ -258,17 +252,7 @@ const router = useRouter()
 const uiStore = useUIStore()
 const authStore = useAuthStore()
 const deploymentCapabilities = useDeploymentCapabilitiesStore()
-const { t, te } = useI18n()
-const hostSkills = computed(() => hostSkillsOnly(
-  deploymentCapabilities.isSupported('settings.sandbox.remote'),
-  deploymentCapabilities.isSupported('settings.sandbox.host'),
-))
-function envNavLabel(): string {
-  const hostKey = 'envVarSettings.host.title'
-  if (hostSkills.value && te(hostKey)) return t(hostKey)
-  return t('envVarSettings.title')
-}
-
+const { t } = useI18n()
 const currentSection = ref<string>('general')
 const currentSubSection = ref<string>('')
 const expandedMenus = ref<string[]>([])
@@ -324,9 +308,6 @@ const isSectionSupported = (key: string): boolean => {
       INTEGRATION_TAB_CAPABILITY[integrationTabFromSection(key)],
     )
   }
-  if (key === 'skills' || key === 'envvars') {
-    return skillSettingsSupported(deploymentCapabilities.capabilities)
-  }
   return deploymentCapabilities.isSupported(SETTINGS_SECTION_CAPABILITY[key])
 }
 
@@ -378,7 +359,6 @@ const navItems = computed(() => {
     { key: 'userprofile', icon: 'user', label: t('userProfile.title') },
     { key: 'mymemory', icon: 'bookmark', label: t('memorySettings.title') },
     { key: 'assistant', icon: 'compass', label: t('assistantSettings.title') },
-    { key: 'envvars', icon: 'key', label: envNavLabel() },
     { key: 'tenant', icon: 'user-circle', label: t('settings.tenantInfo') },
     { key: 'members', icon: 'usergroup', label: t('tenantMember.title') },
     ...integrationItems,
@@ -403,7 +383,7 @@ const navGroups = computed<NavGroup[]>(() => {
     {
       key: 'account',
       label: t('settings.navGroups.account'),
-      items: pickItems(['general', 'userprofile', 'assistant', 'mymemory', 'envvars']),
+      items: pickItems(['general', 'userprofile', 'assistant', 'mymemory']),
     },
     {
       key: 'workspace',
